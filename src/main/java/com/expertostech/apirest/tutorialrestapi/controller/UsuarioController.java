@@ -19,37 +19,50 @@ import com.expertostech.apirest.tutorialrestapi.repository.UsuarioRepository;
 
 @RestController
 public class UsuarioController {
-	
-	@Autowired		//injeção de classe
-	private UsuarioRepository usuarioRepository; 
 
-	//no parametro da função foi passado @PathVariable("codigo") indicando que o parametro String passado
-	//se refere ao {codigo} presente no path da anotação acima do método
+	@Autowired // injeção de classe
+	private UsuarioRepository usuarioRepository;
+
+	// no parametro da função foi passado @PathVariable("codigo") indicando que o
+	// parametro String passado
+	// se refere ao {codigo} presente no path da anotação acima do método
 
 	@GetMapping(path = "/api/usuario/{codigo}")
 	public ResponseEntity consultarUsuario(@PathVariable("codigo") Integer codigo) {
-										// @RequestParam(value = "page", defaultValue = "1") int page, 
-										// @RequestParam(value = "sort", required = false) int sort,		//ordenar
-										// @RequestParam(value = "limit", defaultValue = "10") int limit) {	//limitar resultados
-		return usuarioRepository.findById(codigo)
-				.map(record -> ResponseEntity.ok().body(record))	//caso a requisição retorne algo, trará o resultado
-				.orElse(ResponseEntity.notFound().build());	//caso não haja resposta, retornará not found
+		// @RequestParam(value = "page", defaultValue = "1") int page,
+		// @RequestParam(value = "sort", required = false) int sort, //ordenar
+		// @RequestParam(value = "limit", defaultValue = "10") int limit) { //limitar
+		// resultados
+		return usuarioRepository.findById(codigo).map(record -> ResponseEntity.ok().body(record)) // caso a requisição
+																									// retorne algo,
+																									// trará o resultado
+				.orElse(ResponseEntity.notFound().build()); // caso não haja resposta, retornará not found
 	}
-	
+
 	@GetMapping(path = "/api/usuario/listar")
-	public ResponseEntity<Iterable<UsuarioModel>> listarUsuarios() {		
+	public ResponseEntity<Iterable<UsuarioModel>> listarUsuarios() {
 		Iterable<UsuarioModel> usuariosSalvos = usuarioRepository.findAll();
 		return new ResponseEntity<Iterable<UsuarioModel>>(usuariosSalvos, HttpStatus.OK); //
-		
+
 	}
-	
+
 	@PostMapping(path = "/api/usuario/salvar")
 	public UsuarioModel salvarUsuario(@RequestBody UsuarioModel usuario) {
 		return usuarioRepository.save(usuario);
 	}
-	
-	//@PutMapping
-	
-	
-//	@DeleteMapping
+
+	// deleção enviando dados no body
+	@DeleteMapping(path = "/api/usuario/deletar")
+	public void deletarUsuario(@RequestBody UsuarioModel usuario) {
+		usuarioRepository.delete(usuario);
+	}
+
+	// deleção enviando dados no endpoint
+	@DeleteMapping(path = "/api/usuario/deletar/{codigo}")
+	public void deletarUsuario(@PathVariable("codigo") Integer codigo) {
+		usuarioRepository.deleteById(codigo);
+	}
+
+	// @PutMapping
+
 }
