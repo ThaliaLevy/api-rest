@@ -23,19 +23,12 @@ public class UsuarioController {
 	@Autowired // injeção de classe
 	private UsuarioRepository usuarioRepository;
 
-	// no parametro da função foi passado @PathVariable("codigo") indicando que o
-	// parametro String passado
+	// no parametro da função foi passado @PathVariable("codigo") indicando que o parametro String passado
 	// se refere ao {codigo} presente no path da anotação acima do método
 
 	@GetMapping(path = "/api/usuario/{codigo}")
 	public ResponseEntity consultarUsuario(@PathVariable("codigo") Integer codigo) {
-		// @RequestParam(value = "page", defaultValue = "1") int page,
-		// @RequestParam(value = "sort", required = false) int sort, //ordenar
-		// @RequestParam(value = "limit", defaultValue = "10") int limit) { //limitar
-		// resultados
-		return usuarioRepository.findById(codigo).map(record -> ResponseEntity.ok().body(record)) // caso a requisição
-																									// retorne algo,
-																									// trará o resultado
+		return usuarioRepository.findById(codigo).map(record -> ResponseEntity.ok().body(record)) // caso a requisição retorne algo, trará o resultado
 				.orElse(ResponseEntity.notFound().build()); // caso não haja resposta, retornará not found
 	}
 
@@ -63,6 +56,9 @@ public class UsuarioController {
 		usuarioRepository.deleteById(codigo);
 	}
 
-	// @PutMapping
-
+	@PutMapping(path = "/api/usuario/alterar")
+	public UsuarioModel alterarUsuario(@RequestBody UsuarioModel usuario) {
+		return usuarioRepository.save(usuario);
+		
+	}
 }
